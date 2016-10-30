@@ -1,0 +1,70 @@
+---
+title: "Manipulando Dados (Tidyr)"
+author: "Bruno Lucian"
+date: "19 de setembro de 2016"
+output: 
+ prettydoc::html_pretty:
+    theme: architect
+    highlight: lumen
+---
+
+# Tidyr
+
+Nós frequentemente temos que arrumar dados antes de aplicar um modelo ou começar uma analise descritiva.
+E para isso podemos contar com o poder do pacote *tidyr*
+
+```{r, message=FALSE}
+require(DT)
+require(tidyr)
+```
+
+
+Esse pacote trabalha em cima de dois conceitos básicos:
+
+ * Cada coluna é uma variável.
+ * E cada linha é uma observação.
+ 
+
+São três as funções principais para arrumar os dados: gather(), separate() and spread().
+
+Para exemplificar e dar uma noção do que você pode fazer com cada uma dessas funções vamos trabalhar em cima do exemplo abaixo. 
+
+```{r}
+letras <- data.frame(
+  nome = LETTERS,
+  contagem = rpois(26, 1),
+  razao = round(rnorm(26, 20, 4),2)
+)
+
+```
+
+
+
+```{r}
+datatable(letras)
+```
+
+## gather()
+
+A função **gather()** é usada para transforma seus dados no formato chave-valor: onde a chave explica a 
+informação e o valor contem o real valor da informação.
+
+**gather()** utiliza os nomes das colunas e coloca-os em uma unica coluna chamada "key" e seus valores são colocados em uma outra coluna que chamamos de "value".
+
+Usando **gather()**, esta função recebe o dataframe que queremos remodular, e outros argumentos "key" e "value" que devem receber os nomes(strings) que vão ser atribuidos as colunas "key" e "value" respectivamente. Além disso devemos sinalizar quais variáveis devemos agrupar. 
+
+```{r}
+dados.gather <- gather(letras, key = "Chave", value = "Valor", contagem:razao)
+datatable(dados.gather)
+```
+
+## spread()
+
+A função **spread()** faz o trabalho inverso da função **gather()**, ou seja, recebe um dataframe com formato chave-valor e retorna um dataframe onde as chaves serão colunas com seus repesctivos valores. 
+
+Para usar **spread()** passe o nome do dataframe, o nome da variável "key" e "value". Esses nomes **NÃO** devem ser passados para a função em forma de string, ou seja, não há necessidade de usar aspas.  
+
+```{r}
+dados.spread <- spread(dados.gather, Chave, Valor)
+datatable(dados.spread)
+```
